@@ -1,4 +1,4 @@
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Badge,
   Box,
@@ -30,39 +30,58 @@ import {
 import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
-  Shops,
-  useDeleteShopsMutation,
-  useUpdateShopsMutation,
-} from "../../services/shopApi";
+  Products,
+  useAddCartsMutation,
+  useDeleteProductsMutation,
+  useUpdateProductsMutation,
+} from "../../services/productApi";
 
-export const ShopTable: React.FC<any> = ({
+export const ProductTable: React.FC<any> = ({
   id,
-  name,
-  address,
-  business_type,
+  shop_id,
+  product_name,
+  price,
   is_active,
   data,
 }) => {
   const [
-    deleteShop,
-    { isSuccess: isDeleteSuccess, isLoading: isDeleteLoading },
-  ] = useDeleteShopsMutation();
+    deleteProduct,
+    {
+      isSuccess: isDeleteSuccess,
+      isLoading: isDeleteLoading,
+      isError: isDeleteError,
+    },
+  ] = useDeleteProductsMutation();
   const [
-    updateShop,
-    { isSuccess: isUpdateSuccess, isLoading: isUpdateLoading },
-  ] = useUpdateShopsMutation();
+    updateProduct,
+    {
+      isSuccess: isUpdateSuccess,
+      isLoading: isUpdateLoading,
+      isError: isUpdateError,
+    },
+  ] = useUpdateProductsMutation();
+
+  const [
+    addCart,
+    {
+      isSuccess: isCartSuccess,
+      isLoading: isCartLoading,
+      isError: isCartError,
+    },
+  ] = useAddCartsMutation();
+
   const isDelete = useDisclosure();
   const isUpdate = useDisclosure();
-  const deleteForm = useForm<Shops>();
-  const updateForm = useForm<Shops>();
+  const deleteForm = useForm<Products>();
+  const updateForm = useForm<Products>();
   let toast = useToast();
 
-  const onDelete: SubmitHandler<Shops> = async () => {
-    await deleteShop(id);
+  const onDelete: SubmitHandler<Products> = async () => {
+    await deleteProduct(id);
   };
 
-  const onUpdate: SubmitHandler<Shops> = async (data) => {
-    await updateShop(data);
+  const onUpdate: SubmitHandler<Products> = async (data) => {
+    await updateProduct(data);
   };
 
   useEffect(() => {
@@ -70,8 +89,8 @@ export const ShopTable: React.FC<any> = ({
       isUpdate.onClose();
       toast({
         position: "top",
-        title: "Shop Updated.",
-        description: "Shop updated successfully.",
+        title: "Product Updated.",
+        description: "Product updated successfully.",
         status: "info",
         duration: 3000,
         isClosable: true,
@@ -82,8 +101,8 @@ export const ShopTable: React.FC<any> = ({
       isDelete.onClose();
       toast({
         position: "top",
-        title: "Shop Deleted.",
-        description: "Shop deleted successfully.",
+        title: "Product Deleted.",
+        description: "Product deleted successfully.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -91,6 +110,10 @@ export const ShopTable: React.FC<any> = ({
     }
   }, [isUpdateSuccess, isDeleteSuccess]);
   const [flag, setFlag] = useBoolean(false);
+
+  const addToCart = () => {
+    console.log(id);
+  };
 
   return (
     <>
@@ -115,32 +138,23 @@ export const ShopTable: React.FC<any> = ({
         </Box>
         <Stack>
           <Text
-            color={"green.500"}
+            color={"blue.500"}
             textTransform={"uppercase"}
             fontWeight={800}
-            fontSize={"sm"}
+            fontSize={"xs"}
             letterSpacing={1.1}
           >
-            {business_type}
+            Shop ID : {shop_id}
           </Text>
+          <Heading
+            color={useColorModeValue("gray.700", "white")}
+            fontSize={"2xl"}
+            fontFamily={"body"}
+          >
+            {product_name}
+          </Heading>
           <Flex>
-            <Heading
-              color={useColorModeValue("gray.700", "white")}
-              fontSize={"2xl"}
-              fontFamily={"body"}
-            >
-              {name}
-            </Heading>
-            <Spacer />
-            <Center>
-              <Text color={"blue.500"} fontSize={10} fontWeight={"bold"}>
-                Shop ID : {id}
-              </Text>
-            </Center>
-          </Flex>
-          <Flex>
-            <Text color={"gray.500"}>{address}</Text>
-
+            <Text color={"gray.500"}>{price}</Text>
             <Spacer />
             <Center>
               <EditIcon
@@ -160,17 +174,27 @@ export const ShopTable: React.FC<any> = ({
                 textColor={"red.400"}
                 mx={"2"}
               />
+              |
+              <AddIcon
+                onClick={addToCart}
+                w={5}
+                h={5}
+                cursor={"pointer"}
+                textColor={"blue.400"}
+                mx={"2"}
+              />
             </Center>
           </Flex>
 
           <Text>{is_active}</Text>
         </Stack>
       </Box>
+
       {/* update */}
       <Modal isOpen={isUpdate.isOpen} onClose={isUpdate.onClose}>
         <ModalOverlay />
         <ModalContent as={"form"} onSubmit={updateForm.handleSubmit(onUpdate)}>
-          <ModalHeader>UPDATE SHOP</ModalHeader>
+          <ModalHeader>UPDATE PRODUCT</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={3}>
@@ -179,17 +203,14 @@ export const ShopTable: React.FC<any> = ({
                 value={id}
                 {...updateForm.register("id", { required: true })}
               />
+
               <Input
-                placeholder="Name"
-                {...updateForm.register("name", { required: true })}
+                placeholder="Product Name"
+                {...updateForm.register("product_name", { required: true })}
               />
               <Input
-                placeholder="Address"
-                {...updateForm.register("address", { required: true })}
-              />
-              <Input
-                placeholder="Business Type"
-                {...updateForm.register("business_type", { required: true })}
+                placeholder="Price"
+                {...updateForm.register("price", { required: true })}
               />
               <Checkbox
                 {...updateForm.register("is_active")}
@@ -214,12 +235,13 @@ export const ShopTable: React.FC<any> = ({
       <Modal isOpen={isDelete.isOpen} onClose={isDelete.onClose}>
         <ModalOverlay />
         <ModalContent as={"form"} onSubmit={deleteForm.handleSubmit(onDelete)}>
-          <ModalHeader>DELETE SHOP</ModalHeader>
+          <ModalHeader>DELETE PRODUCT</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={3}>
               <Text>
-                <Badge colorScheme="red">"{name}"</Badge> delete this shop?
+                <Badge colorScheme="red">"{product_name}"</Badge> delete this
+                product?
               </Text>
             </VStack>
           </ModalBody>

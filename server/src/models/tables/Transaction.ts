@@ -8,11 +8,11 @@ import {
   HasOne,
   ForeignKey,
 } from "sequelize-typescript";
-import Cart from "./Cart";
 import Shop from "./Shop";
+import User from "./User";
 
-@Table({ tableName: "User" })
-export default class User extends Model<User> {
+@Table({ tableName: "Transaction" })
+export default class Transaction extends Model<Transaction> {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)

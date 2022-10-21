@@ -68,7 +68,7 @@ const User: NextPage = () => {
       >
         <Flex justifyContent={"center"} alignItems={"center"}>
           <Button bg={"green.200"} onClick={onOpen} m={2}>
-            Add User
+            Register
           </Button>
           <Spacer />
           {isFetching && (

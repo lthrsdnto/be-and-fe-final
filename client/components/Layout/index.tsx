@@ -11,6 +11,7 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  Image,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -36,7 +37,7 @@ const LinkItems: LinkItemProps[] = [
   { name: "Users", url: "/users", icon: AiOutlineUserSwitch },
   { name: "Shops", url: "/shops", icon: BiStore },
   { name: "Products", url: "/products", icon: MdOutlineFoodBank },
-  { name: "Cart", url: "/carts", icon: AiOutlineShoppingCart },
+  { name: "Carts", url: "/carts", icon: AiOutlineShoppingCart },
   { name: "Transaction", url: "/transactions", icon: AiOutlineTransaction },
 ];
 
@@ -93,7 +94,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       >
         <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
           <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-            Logo
+            Shapi
           </Text>
           <CloseButton
             display={{ base: "flex", md: "none" }}
@@ -171,7 +172,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       />
 
       <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
-        Logo
+        Shapi
       </Text>
     </Flex>
   );

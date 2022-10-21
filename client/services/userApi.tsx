@@ -32,11 +32,12 @@ export const userSlice = createApi({
         method: "POST",
         body: data,
       }),
+
       invalidatesTags: ["Users"],
     }),
 
     updateUsers: builder.mutation<void, Users>({
-      query: ({ id, ...data }) => ({
+      query: ({ ...data }) => ({
         url: `/update-user`,
         method: "PUT",
         body: data,

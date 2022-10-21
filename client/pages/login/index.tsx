@@ -3,30 +3,51 @@ import {
   Button,
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
   Input,
+  InputGroup,
+  InputRightElement,
   Spinner,
   Stack,
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../features/authSlice";
+import { useAppDispatch } from "../../hooks";
 import { useLoginUserMutation, User } from "../../services/authApi";
 
 const Login: NextPage = () => {
-  const [loginUser, { isSuccess: isLoginSuccess, isLoading: isLoginLoading }] =
-    useLoginUserMutation();
-  const { register, handleSubmit } = useForm<User>();
+  const [
+    loginUser,
+    {
+      isSuccess: isLoginSuccess,
+      isLoading: isLoginLoading,
+      isError: isLoginError,
+    },
+  ] = useLoginUserMutation();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<User>();
   const onSubmit: SubmitHandler<User> = async (data) => {
     await loginUser(data);
   };
   const toast = useToast();
-
+  const router = useRouter();
+  const [show, setShow] = useState(false);
+  const handleClick = () => setShow(!show);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (isLoginSuccess) {
+      // router.push("/");
       toast({
         position: "top",
         title: "Login Success.",
@@ -35,8 +56,20 @@ const Login: NextPage = () => {
         duration: 3000,
         isClosable: true,
       });
+      // dispatch(setUser({ token: loginUser.token }));
     }
-  }, [isLoginSuccess]);
+
+    if (isLoginError) {
+      toast({
+        position: "top",
+        title: "Login Failed.",
+        description: "Wrong username or password.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, [isLoginSuccess, isLoginError]);
 
   return (
     <Flex align={"center"} justify={"center"}>
@@ -56,15 +89,41 @@ const Login: NextPage = () => {
               <FormLabel>Username</FormLabel>
               <Input
                 type="username"
-                {...register("username", { required: true })}
+                {...register("username", {
+                  required: true,
+                  pattern: /[A-Za-z]{4}/,
+                  max: {
+                    value: 4,
+                    message: "error message",
+                  },
+                })}
+                errorBorderColor="crimson"
               />
+              {errors && (
+                <FormHelperText>{errors.username?.message}</FormHelperText>
+              )}
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                {...register("password", { required: true })}
-              />
+              <InputGroup>
+                {" "}
+                <Input
+                  type={show ? "text" : "password"}
+                  {...register("password", {
+                    required: true,
+                    pattern: /[A-Za-z]{4}/,
+                    max: {
+                      value: 4,
+                      message: "error message",
+                    },
+                  })}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button h="1.75rem" size="sm" onClick={handleClick}>
+                    {show ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
             </FormControl>
             <Stack spacing={10}>
               <Button

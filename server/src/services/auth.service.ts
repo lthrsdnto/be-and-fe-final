@@ -8,12 +8,7 @@ class AuthService extends CommonResponse {
     try {
       let authentication = jwt.sign(requestObject, process.env.SECRET_KEY);
       if (authentication != null) {
-        return this.RESPONSE(
-          200,
-          { accesstoken: authentication },
-          0,
-          "Success!"
-        );
+        return this.RESPONSE(200, { token: authentication }, 0, "Success!");
       } else {
         return this.RESPONSE(400, {}, 0, "Bad request.");
       }
