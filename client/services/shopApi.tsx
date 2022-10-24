@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { RootState } from "../store";
 
 export interface Shops {
   id: number;
@@ -20,7 +21,19 @@ export const shopSlice = createApi({
   reducerPath: "shopApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3001",
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token;
+
+      // If we have a token set in state, let's assume that we should be passing it.
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
+    credentials: "include", // This allows server to set cookies
   }),
+
   tagTypes: ["Shops"],
   endpoints: (builder) => ({
     getShops: builder.query<Shops[], void>({
@@ -46,7 +59,16 @@ export const shopSlice = createApi({
 
     updateShops: builder.mutation<void, Shops>({
       query: ({ ...data }) => ({
-        url: "/update-shop/",
+        url: "/update-shop",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Shops"],
+    }),
+
+    activateShops: builder.mutation({
+      query: ({ ...data }) => ({
+        url: "/activate-shop",
         method: "PUT",
         body: data,
       }),
@@ -68,4 +90,5 @@ export const {
   useAddShopsMutation,
   useUpdateShopsMutation,
   useDeleteShopsMutation,
+  useActivateShopsMutation,
 } = shopSlice;

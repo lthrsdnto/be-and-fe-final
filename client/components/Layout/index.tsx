@@ -12,10 +12,11 @@ import {
   useColorModeValue,
   useDisclosure,
   Image,
+  Heading,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Link from "next/link";
-import React, { ReactText } from "react";
+import React, { ReactText, useEffect } from "react";
 import { IconType } from "react-icons";
 import {
   AiOutlineShoppingCart,
@@ -25,6 +26,8 @@ import {
 import { BiStore } from "react-icons/bi";
 import { FiHome, FiLock, FiMenu } from "react-icons/fi";
 import { MdOutlineFoodBank } from "react-icons/md";
+import { setUser } from "../../features/authSlice";
+import { useAppDispatch } from "../../hooks";
 
 interface LinkItemProps {
   name: string;
@@ -33,7 +36,6 @@ interface LinkItemProps {
 }
 const LinkItems: LinkItemProps[] = [
   { name: "Dashboard", url: "/", icon: FiHome },
-  { name: "Login", url: "/login", icon: FiLock },
   { name: "Users", url: "/users", icon: AiOutlineUserSwitch },
   { name: "Shops", url: "/shops", icon: BiStore },
   { name: "Products", url: "/products", icon: MdOutlineFoodBank },
@@ -42,6 +44,12 @@ const LinkItems: LinkItemProps[] = [
 ];
 
 export const Layout: React.FC<any> = ({ children }) => {
+  // const dispatch = useAppDispatch();
+  // const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  // useEffect(() => {
+  //   dispatch(setUser(user));
+  // }, []);
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
@@ -93,8 +101,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         {...rest}
       >
         <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-          <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-            Shapi
+          <Text
+            fontSize={"xl"}
+            m={4}
+            fontStyle={"monospace"}
+            fontWeight={"black"}
+            textColor={"gray"}
+          >
+            MARKET
           </Text>
           <CloseButton
             display={{ base: "flex", md: "none" }}
@@ -171,8 +185,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         icon={<FiMenu />}
       />
 
-      <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
-        Shapi
+      <Text fontSize={"lg"} m={4} fontWeight={"bold"} textColor={"indigo"}>
+        MARKET
       </Text>
     </Flex>
   );

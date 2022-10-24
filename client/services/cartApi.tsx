@@ -1,13 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
-
-export interface Products {
-  id: number;
-  shop_id: number;
-  product_name: string;
-  price: number;
-  is_active: boolean;
-}
+import { Products } from "./productApi";
 
 export interface Carts {
   id: number;
@@ -15,11 +8,11 @@ export interface Carts {
   shop_id: number;
   product_id: number;
   is_active: boolean;
-  quantity: number;
+  product: Products[];
 }
 
-export const productSlice = createApi({
-  reducerPath: "productApi",
+export const cartSlice = createApi({
+  reducerPath: "cartApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3001",
     prepareHeaders: (headers, { getState }) => {
@@ -33,27 +26,18 @@ export const productSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Products"],
+  tagTypes: ["Carts"],
   endpoints: (builder) => ({
-    getProducts: builder.query<Products[], void>({
-      query: () => "/products",
+    getCarts: builder.query<Carts[], void>({
+      query: () => "/cart",
       transformResponse: (data: any) => data.response,
       providesTags: (result, error, arg) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Products" as const, id })),
-              "Products",
+              ...result.map(({ id }) => ({ type: "Carts" as const, id })),
+              "Carts",
             ]
-          : ["Products"],
-    }),
-
-    addProducts: builder.mutation<any, Products>({
-      query: (data) => ({
-        url: "/add-product",
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["Products"],
+          : ["Carts"],
     }),
 
     addCarts: builder.mutation<any, Carts>({
@@ -62,34 +46,40 @@ export const productSlice = createApi({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Products"],
+      invalidatesTags: ["Carts"],
     }),
 
-    updateProducts: builder.mutation<void, Products>({
+    updateCarts: builder.mutation<void, Carts>({
       query: ({ ...data }) => ({
-        url: "/update-product",
+        url: "/update-item",
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Products"],
+      invalidatesTags: ["Carts"],
     }),
 
-    deleteProducts: builder.mutation({
+    deleteCarts: builder.mutation({
       query: (id) => ({
-        url: `/delete-product/${id}`,
+        url: `/remove-item/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: "Products", id: arg.id },
-      ],
+      invalidatesTags: (result, error, arg) => [{ type: "Carts", id: arg.id }],
+    }),
+
+    emptyCarts: builder.mutation({
+      query: () => ({
+        url: "empty-cart",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Carts"],
     }),
   }),
 });
 
 export const {
-  useGetProductsQuery,
-  useAddProductsMutation,
-  useUpdateProductsMutation,
-  useDeleteProductsMutation,
   useAddCartsMutation,
-} = productSlice;
+  useEmptyCartsMutation,
+  useUpdateCartsMutation,
+  useDeleteCartsMutation,
+  useGetCartsQuery,
+} = cartSlice;

@@ -18,24 +18,37 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useLoginUserMutation, User } from "../../services/authApi";
+import { useCreateUserMutation, User } from "../services/authApi";
 
-const Login: NextPage = () => {
+const Signup: NextPage = () => {
   const [
-    loginUser,
+    signupUser,
     {
-      isSuccess: isLoginSuccess,
-      isLoading: isLoginLoading,
-      isError: isLoginError,
+      isSuccess: isSignupSuccess,
+      isLoading: isSignupLoading,
+      isError: isSignupError,
     },
-  ] = useLoginUserMutation();
+  ] = useCreateUserMutation();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<User>();
   const onSubmit: SubmitHandler<User> = async (data) => {
-    await loginUser(data);
+    try {
+      const response: any = await signupUser(data);
+      if (isSignupError) {
+        toast({
+          position: "top",
+          title: response.error.data.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const toast = useToast();
@@ -44,32 +57,23 @@ const Login: NextPage = () => {
   const handleClick = () => setShow(!show);
 
   useEffect(() => {
-    if (isLoginSuccess) {
-      router.push("/");
+    if (isSignupSuccess) {
+      router.push("/login");
       toast({
         position: "top",
-        title: "Login Successfully.",
+        title: "Signup Success.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
     }
-    if (isLoginError) {
-      toast({
-        position: "top",
-        title: "Username/Password is incorrect.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }, [isLoginError, isLoginSuccess]);
+  }, [isSignupSuccess]);
 
   return (
     <Flex align={"center"} justify={"center"}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
-          <Heading fontSize={"4xl"}>Sign in to your account ✌️</Heading>
+          <Heading fontSize={"4xl"}>Sign up account ✌️</Heading>
         </Stack>
         <Box
           rounded={"lg"}
@@ -77,7 +81,7 @@ const Login: NextPage = () => {
           boxShadow={"lg"}
           p={8}
         >
-          {isLoginLoading && <Spinner />}
+          {isSignupLoading && <Spinner />}
           <Stack spacing={4} as={"form"} onSubmit={handleSubmit(onSubmit)}>
             <FormControl id="username">
               <FormLabel>Username</FormLabel>
@@ -119,6 +123,23 @@ const Login: NextPage = () => {
                 </InputRightElement>
               </InputGroup>
             </FormControl>
+            <FormControl id="confirmPassword">
+              <FormLabel>Confirm Password</FormLabel>
+              <InputGroup>
+                {" "}
+                <Input
+                  type={show ? "text" : "password"}
+                  {...register("confirmPassword", {
+                    required: true,
+                    pattern: /[A-Za-z]{4}/,
+                    max: {
+                      value: 4,
+                      message: "error message",
+                    },
+                  })}
+                />
+              </InputGroup>
+            </FormControl>
             <Stack spacing={10}>
               <Button
                 bg={"blue.400"}
@@ -138,4 +159,4 @@ const Login: NextPage = () => {
   );
 };
 
-export default Login;
+export default Signup;

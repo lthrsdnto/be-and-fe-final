@@ -58,84 +58,83 @@ const User: NextPage = () => {
 
   return (
     <Box w={"full"}>
-      <TableContainer
-        w={["90%", "80%", "60%"]}
-        m={"auto"}
-        borderWidth={1}
-        borderRadius={"2xl"}
-        bgColor={"white"}
-        mt={[5, 10, 20]}
-      >
-        <Flex justifyContent={"center"} alignItems={"center"}>
-          <Button bg={"green.200"} onClick={onOpen} m={2}>
-            Register
-          </Button>
-          <Spacer />
-          {isFetching && (
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
-              size="md"
-              m={2}
-            />
-          )}
-        </Flex>
-
-        <Table variant="simple">
-          <Thead bg={"gray.100"} h={16}>
-            <Tr>
-              <Th>ID</Th>
-              <Th>USERNAME</Th>
-              <Th>PASSWORD</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-
-          {allUserData?.map((user, id) => (
-            <UserTable
-              data={allUserData}
-              id={user.id}
-              username={user.username}
-              password={user.password}
-              key={id}
-            />
-          ))}
-        </Table>
-      </TableContainer>
-
-      {/* create  */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent as={"form"} onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>ADD USER</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={3}>
-              <Input
-                placeholder="Username"
-                {...register("username", { required: true })}
-              />
-              <Input
-                placeholder="Password"
-                {...register("password", { required: true })}
-              />
-              <Input
-                placeholder="Confirm Password"
-                {...register("confirmPassword", { required: true })}
-              />
-            </VStack>
-          </ModalBody>
-          <ModalFooter gap={2}>
-            {isLoading && <Spinner />}
-            <Button colorScheme="teal" variant="outline" type="submit">
-              Submit
+      <Box w={["90%", "80%", "70%"]} mx={"auto"}>
+        <TableContainer
+          m={"auto"}
+          borderWidth={1}
+          borderRadius={"2xl"}
+          bgColor={"white"}
+        >
+          <Flex justifyContent={"center"} alignItems={"center"}>
+            <Button bg={"green.200"} onClick={onOpen} m={2}>
+              Register
             </Button>
-            <Button onClick={onClose}>Close</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <Spacer />
+            {isFetching && (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="md"
+                m={2}
+              />
+            )}
+          </Flex>
+
+          <Table variant="simple">
+            <Thead bg={"gray.100"} h={16}>
+              <Tr>
+                <Th>ID</Th>
+                <Th>USERNAME</Th>
+                <Th></Th>
+              </Tr>
+            </Thead>
+
+            {allUserData?.map((user, id) => (
+              <UserTable
+                data={allUserData}
+                id={user.id}
+                username={user.username}
+                password={user.password}
+                key={id}
+              />
+            ))}
+          </Table>
+        </TableContainer>
+
+        {/* create  */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent as={"form"} onSubmit={handleSubmit(onSubmit)}>
+            <ModalHeader>ADD USER</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={3}>
+                <Input
+                  placeholder="Username"
+                  {...register("username", { required: true })}
+                />
+                <Input
+                  placeholder="Password"
+                  {...register("password", { required: true })}
+                />
+                <Input
+                  placeholder="Confirm Password"
+                  {...register("confirmPassword", { required: true })}
+                />
+              </VStack>
+            </ModalBody>
+            <ModalFooter gap={2}>
+              {isLoading && <Spinner />}
+              <Button colorScheme="teal" variant="outline" type="submit">
+                Submit
+              </Button>
+              <Button onClick={onClose}>Close</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Box>
     </Box>
   );
 };

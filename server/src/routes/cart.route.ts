@@ -4,13 +4,13 @@ import AuthService from "../services/auth.service";
 const CartRouter: Router = express.Router();
 
 CartRouter.post("/add-to-cart", async (req: Request, res: Response) => {
-  // let authenticate = await AuthService.verify(req.headers["authorization"]);
-  // if (authenticate.status == 200) {
-  let response = await CartController.addTocart(req.body);
-  res.status(response.status).send(response);
-  // } else {
-  //   return res.status(authenticate.status).send(authenticate);
-  // }
+  let authenticate = await AuthService.verify(req.headers["authorization"]);
+  if (authenticate.status == 200) {
+    let response = await CartController.addTocart(req.body);
+    res.status(response.status).send(response);
+  } else {
+    return res.status(authenticate.status).send(authenticate);
+  }
 });
 
 CartRouter.get("/cart", async (req: Request, res: Response) => {

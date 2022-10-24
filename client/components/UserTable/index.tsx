@@ -102,7 +102,7 @@ export const UserTable: React.FC<any> = ({ id, username, password }) => {
 
             {username}
           </Td>
-          <Td>{password}</Td>
+
           <Td>
             <EditIcon
               onClick={isUpdate.onOpen}

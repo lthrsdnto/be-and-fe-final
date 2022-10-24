@@ -66,77 +66,76 @@ const Product: NextPage = () => {
 
   return (
     <Box w={"full"}>
-      <Flex>
-        <Center>
-          <Heading m={4}>Products</Heading>
-          <Button bg={"green.200"} onClick={onOpen} m={2}>
-            Add Product
-          </Button>
-          <Spacer />
-          {isFetching && <Spinner />}
-        </Center>
-      </Flex>
-
-      {/* {getAllProduct.products &&
-          getAllProduct.products.map((p: any, ii: any) => (
-            <Box key={ii}>{p.product_name}</Box>
-          ))} */}
-
-      <Flex>
-        <Wrap spacing={10}>
-          {getAllProduct?.map((s, i) => (
-            <ProductTable
-              data={getAllProduct}
-              id={s.id}
-              shop_id={s.shop_id}
-              product_name={s.product_name}
-              price={s.price}
-              is_active={s.is_active}
-              key={i}
-            />
-          ))}
-        </Wrap>
-      </Flex>
-
-      {/* create */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent as={"form"} onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>ADD PRODUCT</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={3}>
-              <Input
-                placeholder="Shop ID"
-                {...register("shop_id", { required: true })}
-              />
-              <Input
-                placeholder="Product Name"
-                {...register("product_name", { required: true })}
-              />
-              <Input
-                placeholder="Price"
-                {...register("price", { required: true })}
-                type="number"
-              />
-              <Checkbox
-                {...register("is_active")}
-                onChange={setActive.toggle}
-                isChecked={active}
-              >
-                Active Product?
-              </Checkbox>
-            </VStack>
-          </ModalBody>
-          <ModalFooter gap={2}>
-            {isLoading && <Spinner />}
-            <Button colorScheme="teal" variant="outline" type="submit">
-              Submit
+      <Box w={"80%"} mx={"auto"}>
+        <Flex>
+          <Center>
+            <Heading m={4} fontWeight={"black"}>
+              Products
+            </Heading>
+            <Button bg={"green.200"} onClick={onOpen} m={2}>
+              Add Product
             </Button>
-            <Button onClick={onClose}>Close</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <Spacer />
+            {isFetching && <Spinner />}
+          </Center>
+        </Flex>
+
+        <Flex>
+          <Wrap spacing={5}>
+            {getAllProduct?.map((s, i) => (
+              <ProductTable
+                data={getAllProduct}
+                id={s.id}
+                shop_id={s.shop_id}
+                product_name={s.product_name}
+                price={s.price}
+                is_active={s.is_active}
+                key={i}
+              />
+            ))}
+          </Wrap>
+        </Flex>
+
+        {/* create */}
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent as={"form"} onSubmit={handleSubmit(onSubmit)}>
+            <ModalHeader>ADD PRODUCT</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={3}>
+                <Input
+                  placeholder="Shop ID"
+                  {...register("shop_id", { required: true })}
+                />
+                <Input
+                  placeholder="Product Name"
+                  {...register("product_name", { required: true })}
+                />
+                <Input
+                  placeholder="Price"
+                  {...register("price", { required: true })}
+                  type="number"
+                />
+                <Checkbox
+                  {...register("is_active")}
+                  onChange={setActive.toggle}
+                  isChecked={active}
+                >
+                  Active Product?
+                </Checkbox>
+              </VStack>
+            </ModalBody>
+            <ModalFooter gap={2}>
+              {isLoading && <Spinner />}
+              <Button colorScheme="teal" variant="outline" type="submit">
+                Submit
+              </Button>
+              <Button onClick={onClose}>Close</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Box>
     </Box>
   );
 };
